@@ -155,10 +155,23 @@ class ArgumentSpec extends Specification {
         def arg = new GenericArgument<Map<UUID, String>>() {}
         expect:
         arg.getType() == Map.class
+        arg.getTypeVariables().size() == 2
         arg.getTypeParameters().length == 2
         arg.getTypeParameters()[0].getType() == UUID.class
         arg.getTypeParameters()[1].getType() == String.class
         arg == Argument.mapOf(UUID, String)
+    }
+
+    void "test map from parameterized type with same type for key and value"() {
+        def original = new GenericArgument<Map<String, String>>() {}
+        def arg = Argument.of(original.asParameterizedType())
+        expect:
+        arg.getType() == Map.class
+        arg.getTypeVariables().size() == 2
+        arg.getTypeParameters().length == 2
+        arg.getTypeParameters()[0].getType() == String.class
+        arg.getTypeParameters()[1].getType() == String.class
+        arg == Argument.mapOf(String, String)
     }
 
     void "test generic list of lists"() {
